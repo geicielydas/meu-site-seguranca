@@ -1,32 +1,35 @@
 
-// Mensagem de boas-vindas
-console.log("Bem-vindo ao site Segurança Digital!");
+let lendo = false;
 
-// Identificar links suspeitos
-function verificarMensagem(mensagem) {
-    const sinaisDeAlerta = [
-        "clique no link",
-        "prêmio",
-        "pix",
-        "urgente",
-        "senha",
-        "resgate"
-    ];
-
-    const texto = mensagem.toLowerCase();
-
-    const suspeita = sinaisDeAlerta.some(sinal =>
-        texto.includes(sinal)
-    );
-
-    if (suspeita) {
-        return "Atenção! Esta mensagem pode ser suspeita. Verifique antes de clicar.";
-    } else {
-        return "Não foram encontrados sinais comuns de golpe. Continue atento!";
-    }
+function finalizarLeitura() {
+    lendo = false;
 }
 
-// Exemplo de mensagem
-const mensagem = "Parabéns! Você ganhou um prêmio. Clique no link para resgatar.";
+function lerEmVozAlta() {
 
-console.log(verificarMensagem(mensagem));
+    if (lendo === true) {
+
+        if (speechSynthesis.paused === true) {
+            speechSynthesis.resume();
+        } else {
+            speechSynthesis.pause();
+        }
+
+        return;
+    }
+
+    let conteudo = document.querySelector("main");
+    let texto = conteudo.innerText;
+
+    let fala = new SpeechSynthesisUtterance(texto);
+
+    fala.lang = "pt-BR";
+    fala.onend = finalizarLeitura;
+    fala.onerror = finalizarLeitura;
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(fala);
+
+    lendo = true;
+}
+
